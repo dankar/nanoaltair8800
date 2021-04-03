@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cortex-debug.JLinkGDBServerPath": "/opt/SEGGER/JLink/JLinkGDBServerCLExe",
+		"files.associations": {
+			"type_traits": "cpp",
+			"cmath": "cpp"
+		}
+	}
+}
