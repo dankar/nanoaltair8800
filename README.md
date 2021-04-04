@@ -7,7 +7,7 @@ The Intel 8080 emulation is much improved, the PCB is credit card sized and it c
 
 This is still a work in progress, and there might be both hardware and software bugs. This documentation should be accurate, but there might be changes that haven't been added to the documentation yet. If in doubt, check the code and build scripts.
 
-![Image of PCB](https://github.com/dankar/nanoaltair/raw/master/doc/nanoaltair.jpg)
+![Image of PCB](/doc/nanoaltair.jpg)
 
 License
 =======
