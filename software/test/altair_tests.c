@@ -245,8 +245,8 @@ void run_command(const char *inp)
     serial1_add_data((uint8_t*)"\n", 1);
 }
 
-#define DEFAULT_TIMEOUT 2000
-#define DEFAULT_BUILD_TIMEOUT 30000
+#define DEFAULT_TIMEOUT 10000
+#define DEFAULT_BUILD_TIMEOUT 300000
 #define INFINITE_TIMEOUT 0x10000000
 
 #define RUN_TEST(name, input, output, error, timeout) do { if(input) { TEST(run_command(input)); } if(error) { TEST_CONDITION(wait_for_output_with_error(output, error, timeout), name); } else { TEST_CONDITION(wait_for_output(output, timeout), name); } } while(0)
@@ -495,7 +495,7 @@ DECLARE_TEST(cpu_tests)
     RUN_TEST("pattern", "CPUTEST", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", NULL, DEFAULT_TIMEOUT);
     WAIT_TEST("cpu validated", "CPU IS 8080/8085", DEFAULT_TIMEOUT);
     WAIT_TEST("timing test started", "BEGIN TIMING TEST", DEFAULT_TIMEOUT);
-    WAIT_TEST("timing test ended", "END TIMING TEST", DEFAULT_TIMEOUT*4);
+    WAIT_TEST("timing test ended", "END TIMING TEST", DEFAULT_TIMEOUT*10);
     WAIT_TEST("cpu passed", "CPU TESTS OK", DEFAULT_TIMEOUT*2);
     WAIT_TEST("prompt", "B>", DEFAULT_TIMEOUT);
     END_TEST();

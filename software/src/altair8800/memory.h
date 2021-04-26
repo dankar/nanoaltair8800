@@ -26,8 +26,8 @@ static inline void write8(uint16_t address, uint8_t val)
 static inline uint16_t read16(uint16_t address)
 {
     uint16_t result = 0;
-    result = *(uint16_t*)&memory[address];
-    //result |= read8(address+1) << 8;
+    result = memory[address];
+    result |= read8(address+1) << 8;
     return result;
 }
 
@@ -37,7 +37,8 @@ static inline void write16(uint16_t address, uint16_t val)
     {
         return;
     }
-    *(uint16_t*)&memory[address] = val;
+    memory[address] = val & 0xff;
+    memory[address+1] = (val >> 8) & 0xff;
 }
 
 void memory_load_rom(const rom_t *rom);

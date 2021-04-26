@@ -10,6 +10,7 @@ uint32_t tester_get_tick();
 
 typedef enum
 {
+    TEST_LEVEL_NONE = 0,
     TEST_LEVEL_ONE,
     TEST_LEVEL_TWO,
     TEST_LEVEL_THREE

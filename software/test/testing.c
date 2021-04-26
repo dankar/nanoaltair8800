@@ -180,6 +180,7 @@ void tester_fail(test_results_t *results, const char *description, const char *t
         test_print_error();
     }
     tester_new_result(&results->failed_head, &results->failed_tail, description, test_condition, false, time);
+    TESTING_LEVEL = TEST_LEVEL_NONE;
 }
 
 void print_line()
