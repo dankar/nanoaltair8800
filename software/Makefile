@@ -124,7 +124,7 @@ endif
 HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 TEST_CC = gcc
-RUN_FULL_TESTS = $(TEST_BUILD_DIR)/$(TEST_TARGET) level_three > $(FULL_TEST_OUTPUT)
+RUN_FULL_TESTS = $(TEST_BUILD_DIR)/$(TEST_TARGET) level_one > $(FULL_TEST_OUTPUT)
 RUN_BASIC_TESTS = $(TEST_BUILD_DIR)/$(TEST_TARGET) level_one > $(BASIC_TEST_OUTPUT)
 DFUUTIL = dfu-util -a 0 -R -i 0 -s 0x08000000:leave -D
 
