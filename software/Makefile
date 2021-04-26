@@ -330,10 +330,8 @@ clean:
 
 program_debug: $(BASIC_TEST_OUTPUT) $(DEBUG_BUILD_DIR)/$(TARGET).bin
 	$(DFUUTIL) $(DEBUG_BUILD_DIR)/$(TARGET).bin
-
 program_release: $(BASIC_TEST_OUTPUT) $(RELEASE_BUILD_DIR)/$(TARGET).bin
 	$(DFUUTIL) $(RELEASE_BUILD_DIR)/$(TARGET).bin
-
 program_profile: $(BASIC_TEST_OUTPUT) $(PROFILE_BUILD_DIR)/$(TARGET).bin
 	$(DFUUTIL) $(PROFILE_BUILD_DIR)/$(TARGET).bin
 
