@@ -16,21 +16,11 @@ jobs:
         - uses: fiam/arm-none-eabi-gcc@v1
           with:
             release: '10-2020-q4' # The arm-none-eabi-gcc release to use.
-        - name: Extract tag name
-          id: tag
-          uses: actions/github-script@0.2.0
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              return context.payload.ref.replace(/refs\/tags\//, '');
         - name: "Build & test"
           working-directory: ./software
           run: make archive
-
         - uses: "marvinpinto/action-automatic-releases@latest"
           with:
             repo_token: "${{ secrets.GITHUB_TOKEN }}"
-            automatic_release_tag: "${{ steps.tag.outputs.result }}"
-            prerelease: true
-            title: "${{ steps.tag.outputs.result }}"
+            prerelease: false
             files: releases/*.zip
