@@ -19,7 +19,7 @@ BASIC_TEST_OUTPUT = auto_tests_basic.log
 
 RELEASE_FOLDER=../releases
 
-RELEASE_VERSION=0.0.4
+RELEASE_VERSION=$(shell git describe --tags)
 
 COMMIT_HASH = $(shell git log --pretty=format:'%h' -n 1)$(shell git diff-index --quiet HEAD || echo "+mod")
 
