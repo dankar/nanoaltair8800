@@ -1,6 +1,8 @@
 nanoAltair
 ==========
 
+![CI status](https://github.com/dankar/nanoaltair8800/actions/workflows/c-cpp.yml/badge.svg)
+
 This is a continuation and remake of my old Altair8800 project (https://github.com/dankar/altair8800)
 
 The Intel 8080 emulation is much improved, the PCB is credit card sized and it contains all the processing power required on board. Micro USB connector provides power, serial port and firmware updates.
