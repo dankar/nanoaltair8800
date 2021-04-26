@@ -1,0 +1,29 @@
+---
+name: "Release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  gh_tagged_release:
+    name: "Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+        - uses: actions/checkout@v2
+        - uses: fiam/arm-none-eabi-gcc@v1
+          with:
+              release: '10-2020-q4' # The arm-none-eabi-gcc release to use.
+      - name: "Build & test"
+        working-directory: ./software
+        run: make archive
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: releases/*.zip
