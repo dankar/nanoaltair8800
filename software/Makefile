@@ -197,7 +197,7 @@ all: debug
 debug: $(BASIC_TEST_OUTPUT) $(DEBUG_BUILD_DIR)/$(TARGET).elf $(DEBUG_BUILD_DIR)/$(TARGET).hex $(DEBUG_BUILD_DIR)/$(TARGET).bin
 release: $(BASIC_TEST_OUTPUT) $(RELEASE_BUILD_DIR)/$(TARGET).elf $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).bin
 profile: $(BASIC_TEST_OUTPUT) $(PROFILE_BUILD_DIR)/$(TARGET).elf $(PROFILE_BUILD_DIR)/$(TARGET).hex $(PROFILE_BUILD_DIR)/$(TARGET).bin
-archive: program.bat program.sh release $(FULL_TEST_OUTPUT)
+archive: program.bat program.sh release $(FULL_TEST_OUTPUT) $(RELEASE_DIR)
 	zip -j $(RELEASE_FOLDER)/nanoaltair-$(RELEASE_BUILD_VERSION).zip program.sh program.bat $(RELEASE_BUILD_DIR)/$(TARGET).bin $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).elf $(FULL_TEST_OUTPUT) ../README.md
 	-rm -f program.sh
 	-rm -f program.bat
