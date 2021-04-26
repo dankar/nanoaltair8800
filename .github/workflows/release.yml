@@ -22,7 +22,7 @@ jobs:
           with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             script: |
-              return context.payload.ref.replace(/\/refs\/tags\//, '');
+              return context.payload.ref.replace(/refs\/tags\//, '');
         - name: "Build & test"
           working-directory: ./software
           run: make archive
