@@ -105,18 +105,19 @@ src/sys/buffer.c \
 src/sys/pc/filesystem_pc.c \
 $(wildcard test/*.c)
 
-
 #######################################
 # binaries
 #######################################
 PREFIX = arm-none-eabi-
 ifdef GCC_PATH
 CC = $(GCC_PATH)/$(PREFIX)gcc
+LD = $(GCC_PATH)/$(PREFIX)gcc
 AS = $(GCC_PATH)/$(PREFIX)gcc -x assembler-with-cpp
 CP = $(GCC_PATH)/$(PREFIX)objcopy
 SZ = $(GCC_PATH)/$(PREFIX)size
 else
 CC = $(PREFIX)gcc
+LD = $(PREFIX)gcc
 AS = $(PREFIX)gcc -x assembler-with-cpp
 CP = $(PREFIX)objcopy
 SZ = $(PREFIX)size
@@ -198,7 +199,8 @@ debug: $(BASIC_TEST_OUTPUT) $(DEBUG_BUILD_DIR)/$(TARGET).elf $(DEBUG_BUILD_DIR)/
 release: $(BASIC_TEST_OUTPUT) $(RELEASE_BUILD_DIR)/$(TARGET).elf $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).bin
 profile: $(BASIC_TEST_OUTPUT) $(PROFILE_BUILD_DIR)/$(TARGET).elf $(PROFILE_BUILD_DIR)/$(TARGET).hex $(PROFILE_BUILD_DIR)/$(TARGET).bin
 archive: program.bat program.sh release $(FULL_TEST_OUTPUT) $(RELEASE_FOLDER)
-	zip -j $(RELEASE_FOLDER)/nanoaltair-$(RELEASE_BUILD_VERSION).zip program.sh program.bat $(RELEASE_BUILD_DIR)/$(TARGET).bin $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).elf $(FULL_TEST_OUTPUT) ../README.md
+	@echo "[archive] Creating release zip..."
+	@zip -j $(RELEASE_FOLDER)/nanoaltair-$(RELEASE_BUILD_VERSION).zip program.sh program.bat $(RELEASE_BUILD_DIR)/$(TARGET).bin $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).elf $(FULL_TEST_OUTPUT) ../README.md
 	-rm -f program.sh
 	-rm -f program.bat
 	cat $(FULL_TEST_OUTPUT)
@@ -230,96 +232,118 @@ PROFILE_OBJECTS = $(addprefix $(PROFILE_BUILD_DIR)/, $(OBJECTS))
 # Compile targets
 #######################################
 $(TEST_BUILD_DIR)/%.o: %.c Makefile | $(TEST_BUILD_DIR)
-	$(TEST_CC) -c $(VERSION_DEFINE) $(TEST_CFLAGS) $(C_MAIN_INCLUDES) $< -o $@
+	@echo "[test] CC" $<
+	@$(TEST_CC) -c $(VERSION_DEFINE) $(TEST_CFLAGS) $(C_MAIN_INCLUDES) $< -o $@
 
 $(RELEASE_BUILD_DIR)/%.o: %.c Makefile | $(RELEASE_BUILD_DIR)
-	$(CC) -c $(VERSION_DEFINE) $(RELEASE_CFLAGS) -Wa,-a,-ad,-alms=$(RELEASE_BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	@echo "[release] CC" $<
+	@$(CC) -c $(VERSION_DEFINE) $(RELEASE_CFLAGS) -Wa,-a,-ad,-alms=$(RELEASE_BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(DEBUG_BUILD_DIR)/%.o: %.c Makefile | $(DEBUG_BUILD_DIR)
-	$(CC) -c $(VERSION_DEFINE) $(DEBUG_CFLAGS) -Wa,-a,-ad,-alms=$(DEBUG_BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	@echo "[debug] CC" $<
+	@$(CC) -c $(VERSION_DEFINE) $(DEBUG_CFLAGS) -Wa,-a,-ad,-alms=$(DEBUG_BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(PROFILE_BUILD_DIR)/%.o: %.c Makefile | $(PROFILE_BUILD_DIR)
-	$(CC) -c $(VERSION_DEFINE) $(PROFILE_CFLAGS) -Wa,-a,-ad,-alms=$(PROFILE_BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	@echo "[profile] CC" $<
+	@$(CC) -c $(VERSION_DEFINE) $(PROFILE_CFLAGS) -Wa,-a,-ad,-alms=$(PROFILE_BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 #######################################
 # Assembler targets
 #######################################
 $(RELEASE_BUILD_DIR)/%.o: %.s Makefile | $(RELEASE_BUILD_DIR)
-	$(AS) -c $(RELEASE_ASFLAGS) $< -o $@
+	@echo "[release] AS" $<
+	@$(AS) -c $(RELEASE_ASFLAGS) $< -o $@
 
 $(DEBUG_BUILD_DIR)/%.o: %.s Makefile | $(DEBUG_BUILD_DIR)
-	$(AS) -c $(DEBUG_ASFLAGS) $< -o $@
+	@echo "[debug] AS" $<
+	@$(AS) -c $(DEBUG_ASFLAGS) $< -o $@
 
 $(PROFILE_BUILD_DIR)/%.o: %.s Makefile | $(PROFILE_BUILD_DIR)
-	$(AS) -c $(DEBUG_ASFLAGS) $< -o $@
+	@echo "[profile] AS" $<
+	@$(AS) -c $(DEBUG_ASFLAGS) $< -o $@
 
 #######################################
 # Link targets
 #######################################
 $(DEBUG_BUILD_DIR)/$(TARGET).elf: $(DEBUG_OBJECTS) Makefile
-	echo $(TJO)
-	$(CC) $(DEBUG_OBJECTS) $(DEBUG_LDFLAGS) -o $@
-	$(SZ) $@
+	@echo "[debug] LD" $@
+	@$(CC) $(DEBUG_OBJECTS) $(DEBUG_LDFLAGS) -o $@
+	@$(SZ) $@
 
 $(RELEASE_BUILD_DIR)/$(TARGET).elf: $(RELEASE_OBJECTS) Makefile
-	$(CC) $(RELEASE_OBJECTS) $(RELEASE_LDFLAGS) -o $@
-	$(SZ) $@
+	@echo "[release] LD" $@
+	@$(CC) $(RELEASE_OBJECTS) $(RELEASE_LDFLAGS) -o $@
+	@$(SZ) $@
 
 $(PROFILE_BUILD_DIR)/$(TARGET).elf: $(PROFILE_OBJECTS) Makefile
-	$(CC) $(PROFILE_OBJECTS) $(PROFILE_LDFLAGS) -o $@
-	$(SZ) $@
+	@echo "[profile] LD" $@
+	@$(CC) $(PROFILE_OBJECTS) $(PROFILE_LDFLAGS) -o $@
+	@$(SZ) $@
 
 $(TEST_BUILD_DIR)/$(TEST_TARGET): $(TEST_OBJECTS) Makefile | $(TEST_BUILD_DIR)
-	$(TEST_CC) -Ofast -Werror $(TEST_OBJECTS) -o $@
+	@echo "[test] LD" $@
+	@$(TEST_CC) -Ofast -Werror $(TEST_OBJECTS) -o $@
 
 #######################################
 # Generate hex/bin
 #######################################
 $(DEBUG_BUILD_DIR)/%.hex: $(DEBUG_BUILD_DIR)/%.elf | $(DEBUG_BUILD_DIR)
-	$(HEX) $< $@
+	@echo "[debug] Create" $@
+	@$(HEX) $< $@
 
 $(RELEASE_BUILD_DIR)/%.hex: $(RELEASE_BUILD_DIR)/%.elf | $(RELEASE_BUILD_DIR)
-	$(HEX) $< $@
+	@echo "[release] Create" $@
+	@$(HEX) $< $@
 
 $(PROFILE_BUILD_DIR)/%.hex: $(PROFILE_BUILD_DIR)/%.elf | $(PROFILE_BUILD_DIR)
-	$(HEX) $< $@
+	@echo "[profile] Create" $@
+	@$(HEX) $< $@
 
 $(DEBUG_BUILD_DIR)/%.bin: $(DEBUG_BUILD_DIR)/%.elf | $(DEBUG_BUILD_DIR)
-	$(BIN) $< $@
+	@echo "[debug] Create" $@
+	@$(BIN) $< $@
 
 $(RELEASE_BUILD_DIR)/%.bin: $(RELEASE_BUILD_DIR)/%.elf | $(RELEASE_BUILD_DIR)
-	$(BIN) $< $@
+	@echo "[release] Create" $@
+	@$(BIN) $< $@
 
 $(PROFILE_BUILD_DIR)/%.bin: $(PROFILE_BUILD_DIR)/%.elf | $(PROFILE_BUILD_DIR)
-	$(BIN) $< $@
+	@echo "[profile] Create" $@
+	@$(BIN) $< $@
 
 #######################################
 # Generate folders
 #######################################
 
 $(BASE_BUILD_DIR):
-	-mkdir $@
+	@echo "[base] Create" $@
+	@-mkdir $@
 
 $(RELEASE_BUILD_DIR): | $(BASE_BUILD_DIR)
-	-mkdir $@
+	@echo "[release] Create" $@
+	@-mkdir $@
 
 $(DEBUG_BUILD_DIR): | $(BASE_BUILD_DIR)
-	-mkdir $@
+	@echo "[debug] Create" $@
+	@-mkdir $@
 
 $(PROFILE_BUILD_DIR): | $(BASE_BUILD_DIR)
-	-mkdir $@
+	@echo "[profile] Create" $@
+	@-mkdir $@
 
 $(TEST_BUILD_DIR): | $(BASE_BUILD_DIR)
-	-mkdir $@
+	@echo "[test] Create" $@
+	@-mkdir $@
 
 $(RELEASE_FOLDER):
-	-mkdir $@
+	@echo "[archive] Create" $@
+	@-mkdir $@
 
 $(FULL_TEST_OUTPUT): $(TEST_BUILD_DIR)/$(TEST_TARGET)
-	$(RUN_FULL_TESTS)
+	@$(RUN_FULL_TESTS)
 
 $(BASIC_TEST_OUTPUT): $(TEST_BUILD_DIR)/$(TEST_TARGET)
-	$(RUN_BASIC_TESTS)
+	@$(RUN_BASIC_TESTS)
 
 clean:
 	-rm -fR program.sh
@@ -329,18 +353,21 @@ clean:
 	-rm -fR $(FULL_TEST_OUTPUT)
 
 program_debug: $(BASIC_TEST_OUTPUT) $(DEBUG_BUILD_DIR)/$(TARGET).bin
-	$(DFUUTIL) $(DEBUG_BUILD_DIR)/$(TARGET).bin
+	@echo "[debug] Flashing firmware..."
+	@$(DFUUTIL) $(DEBUG_BUILD_DIR)/$(TARGET).bin
 program_release: $(BASIC_TEST_OUTPUT) $(RELEASE_BUILD_DIR)/$(TARGET).bin
-	$(DFUUTIL) $(RELEASE_BUILD_DIR)/$(TARGET).bin
+	@echo "[release] Flashing firmware..."
+	@$(DFUUTIL) $(RELEASE_BUILD_DIR)/$(TARGET).bin
 program_profile: $(BASIC_TEST_OUTPUT) $(PROFILE_BUILD_DIR)/$(TARGET).bin
-	$(DFUUTIL) $(PROFILE_BUILD_DIR)/$(TARGET).bin
+	@echo "[profile] Flashing firmware..."
+	@$(DFUUTIL) $(PROFILE_BUILD_DIR)/$(TARGET).bin
 
 program.sh:
-	echo "$(DFUUTIL) $(TARGET).bin" > program.sh
-	chmod +x program.sh
+	@echo "$(DFUUTIL) $(TARGET).bin" > program.sh
+	@chmod +x program.sh
 
 program.bat: program.sh
-	cat program.sh > program.bat
+	@cat program.sh > program.bat
 
 -include $(wildcard $(DEBUG_BUILD_DIR)/*.d)
 -include $(wildcard $(RELEASE_BUILD_DIR)/*.d)
