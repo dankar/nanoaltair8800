@@ -32,7 +32,7 @@ extern volatile uint8_t status;
 void read_cfg(intel8080_t *cpu)
 {
     const char *default_cfg = "altair.cfg";
-    
+
     if(!config_read(default_cfg, cpu))
     {
         for(int i = 0; i < 5; i++)
@@ -68,7 +68,7 @@ void run_sim()
 #endif
     timer_periodic(&led_timer, 10);
     hw_timer_start_tim1();
-    
+
     while(true)
     {
         for(int i = 0; i < 1000; i++)
