@@ -1,8 +1,11 @@
+.PHONY: debug release all profile archive full_tests basic_tests daemon
+
 ######################################
 # target
 ######################################
 
 BASE_BUILD_DIR=build
+DAEMON_BUILD_DIR=$(BASE_BUILD_DIR)/daemon
 RELEASE_BUILD_DIR=$(BASE_BUILD_DIR)/release
 DEBUG_BUILD_DIR=$(BASE_BUILD_DIR)/debug
 PROFILE_BUILD_DIR=$(BASE_BUILD_DIR)/profile
@@ -14,6 +17,7 @@ else
 TEST_TARGET = tester
 endif
 TARGET = nanoaltair
+DAEMON_TARGET = nanoaltaird
 FULL_TEST_OUTPUT = auto_tests_full.log
 BASIC_TEST_OUTPUT = auto_tests_basic.log
 
@@ -28,12 +32,6 @@ DEBUG_BUILD_VERSION=debug-$(COMMIT_HASH)
 
 RELEASE_VERSION_DEFINE=-DBUILD_VERSION=\"$(RELEASE_BUILD_VERSION)\"
 DEBUG_VERSION_DEFINE=-DBUILD_VERSION=\"$(DEBUG_BUILD_VERSION)\"
-
-#######################################
-# paths
-#######################################
-# Build path
-
 
 ######################################
 # source
@@ -105,6 +103,14 @@ src/sys/buffer.c \
 src/sys/pc/filesystem_pc.c \
 $(wildcard test/*.c)
 
+C_DAEMON_SOURCES = \
+$(wildcard src/altair8800/*.c) \
+src/sys/log.c \
+src/sys/buffer.c \
+src/sys/pc/filesystem_pc.c \
+src/daemon/daemon.c
+
+
 #######################################
 # binaries
 #######################################
@@ -161,6 +167,7 @@ C_MAIN_INCLUDES = \
 -Isrc
 
 
+
 # compile gcc flags
 
 # optimization
@@ -179,6 +186,7 @@ PROFILE_CFLAGS = $(DEBUG_CFLAGS) $(DEBUG_OPT) -finstrument-functions -finstrumen
 				-mpoke-function-name -DPROFILER_ENABLED=1
 RELEASE_CFLAGS = $(BASE_CFLAGS) $(RELEASE_OPT) 
 TEST_CFLAGS = -DTEST_BUILD -Werror -Wall -Ofast -MMD -MP -MF"$(@:%.o=%.d)" -DUINT=uint32_t $(RELEASE_VERSION_DEFINE)
+DAEMON_CFLAGS = -DTEST_BUILD -Werror -Wall -Ofast -MMD -MP -MF"$(@:%.o=%.d)" -DUINT=uint32_t $(RELEASE_VERSION_DEFINE)
 
 #######################################
 # LDFLAGS
@@ -193,14 +201,18 @@ RELEASE_LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-
 DEBUG_LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(DEBUG_BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections  -u _printf_float
 PROFILE_LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(PROFILE_BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections  -u _printf_float
 
-.PHONY = debug release all profile archive full_tests basic_tests
-all: debug
+all: debug release profile daemon
+daemon: $(DAEMON_BUILD_DIR)/$(DAEMON_TARGET)
 debug: $(BASIC_TEST_OUTPUT) $(DEBUG_BUILD_DIR)/$(TARGET).elf $(DEBUG_BUILD_DIR)/$(TARGET).hex $(DEBUG_BUILD_DIR)/$(TARGET).bin
 release: $(BASIC_TEST_OUTPUT) $(RELEASE_BUILD_DIR)/$(TARGET).elf $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).bin
 profile: $(BASIC_TEST_OUTPUT) $(PROFILE_BUILD_DIR)/$(TARGET).elf $(PROFILE_BUILD_DIR)/$(TARGET).hex $(PROFILE_BUILD_DIR)/$(TARGET).bin
 archive: program.bat program.sh release $(FULL_TEST_OUTPUT) $(RELEASE_FOLDER)
 	@echo "[archive] Creating release zip..."
-	@zip -j $(RELEASE_FOLDER)/nanoaltair-$(RELEASE_BUILD_VERSION).zip program.sh program.bat $(RELEASE_BUILD_DIR)/$(TARGET).bin $(RELEASE_BUILD_DIR)/$(TARGET).hex $(RELEASE_BUILD_DIR)/$(TARGET).elf $(FULL_TEST_OUTPUT) ../README.md
+	@zip -j $(RELEASE_FOLDER)/nanoaltair-$(RELEASE_BUILD_VERSION).zip \
+			program.sh program.bat $(RELEASE_BUILD_DIR)/$(TARGET).bin \
+			$(RELEASE_BUILD_DIR)/$(TARGET).hex \
+			$(RELEASE_BUILD_DIR)/$(TARGET).elf \
+			$(FULL_TEST_OUTPUT) ../README.md
 	-rm -f program.sh
 	-rm -f program.bat
 	cat $(FULL_TEST_OUTPUT)
@@ -209,9 +221,29 @@ full_tests: $(FULL_TEST_OUTPUT)
 basic_tests: $(BASIC_TEST_OUTPUT)
 
 #######################################
-# build the application
-#######################################
-# list of objects
+# Daemon
+######################################
+DAEMON_OBJECTS = $(addprefix $(DAEMON_BUILD_DIR)/,$(notdir $(C_DAEMON_SOURCES:.c=.o)))
+vpath %.c $(sort $(dir $(C_DAEMON_SOURCES)))
+
+DAEMON_INCLUDES = $(C_MAIN_INCLUDES) \
+$(shell pkg-config --cflags libczmq libzmq)
+
+DAEMON_LDFLAGS = \
+$(shell pkg-config --libs libczmq libzmq)
+
+$(DAEMON_BUILD_DIR)/%.o: %.c Makefile | $(DAEMON_BUILD_DIR)
+	@echo "[daemon] CC" $<
+	@$(TEST_CC) -c $(VERSION_DEFINE) $(DAEMON_CFLAGS) $(DAEMON_INCLUDES) $< -o $@
+
+$(DAEMON_BUILD_DIR)/$(DAEMON_TARGET): $(DAEMON_OBJECTS) Makefile
+	@echo "[daemon] LD" $@
+	@$(TEST_CC) -Ofast -Werror $(DAEMON_OBJECTS) $(DAEMON_LDFLAGS) -o $@
+
+##
+# other
+##
+
 OBJECTS = $(notdir $(C_STM32_SOURCES:.c=.o))
 vpath %.c $(sort $(dir $(C_STM32_SOURCES)))
 # list of ASM program objects
@@ -224,6 +256,7 @@ vpath %.c $(sort $(dir $(C_MAIN_SOURCES)))
 TEST_OBJECTS = $(addprefix $(TEST_BUILD_DIR)/,$(notdir $(C_TEST_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_TEST_SOURCES)))
 
+
 RELEASE_OBJECTS = $(addprefix $(RELEASE_BUILD_DIR)/, $(OBJECTS))
 DEBUG_OBJECTS = $(addprefix $(DEBUG_BUILD_DIR)/, $(OBJECTS))
 PROFILE_OBJECTS = $(addprefix $(PROFILE_BUILD_DIR)/, $(OBJECTS))
@@ -231,6 +264,7 @@ PROFILE_OBJECTS = $(addprefix $(PROFILE_BUILD_DIR)/, $(OBJECTS))
 #######################################
 # Compile targets
 #######################################
+
 $(TEST_BUILD_DIR)/%.o: %.c Makefile | $(TEST_BUILD_DIR)
 	@echo "[test] CC" $<
 	@$(TEST_CC) -c $(VERSION_DEFINE) $(TEST_CFLAGS) $(C_MAIN_INCLUDES) $< -o $@
@@ -265,6 +299,7 @@ $(PROFILE_BUILD_DIR)/%.o: %.s Makefile | $(PROFILE_BUILD_DIR)
 #######################################
 # Link targets
 #######################################
+
 $(DEBUG_BUILD_DIR)/$(TARGET).elf: $(DEBUG_OBJECTS) Makefile
 	@echo "[debug] LD" $@
 	@$(CC) $(DEBUG_OBJECTS) $(DEBUG_LDFLAGS) -o $@
@@ -335,6 +370,10 @@ $(TEST_BUILD_DIR): | $(BASE_BUILD_DIR)
 	@echo "[test] Create" $@
 	@-mkdir $@
 
+$(DAEMON_BUILD_DIR): | $(BASE_BUILD_DIR)
+	@echo "[daemon] Create" $@
+	@-mkdir $@
+
 $(RELEASE_FOLDER):
 	@echo "[archive] Create" $@
 	@-mkdir $@
@@ -373,3 +412,4 @@ program.bat: program.sh
 -include $(wildcard $(RELEASE_BUILD_DIR)/*.d)
 -include $(wildcard $(PROFILE_BUILD_DIR)/*.d)
 -include $(wildcard $(TEST_BUILD_DIR)/*.d)
+-include $(wildcard $(DAEMON_BUILD_DIR)/*.d)
