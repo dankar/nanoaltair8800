@@ -16,6 +16,5 @@ jobs:
     - uses: fiam/arm-none-eabi-gcc@v1
       with:
         release: '10-2020-q4' # The arm-none-eabi-gcc release to use.
-    - name: make
-      working-directory: ./software
-      run: make release
+    - name: Build software
+      run: ./build.sh
