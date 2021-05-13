@@ -103,14 +103,6 @@ src/sys/buffer.c \
 src/sys/pc/filesystem_pc.c \
 $(wildcard test/*.c)
 
-C_DAEMON_SOURCES = \
-$(wildcard src/altair8800/*.c) \
-src/sys/log.c \
-src/sys/buffer.c \
-src/sys/pc/filesystem_pc.c \
-src/daemon/daemon.c
-
-
 #######################################
 # binaries
 #######################################
@@ -223,6 +215,14 @@ basic_tests: $(BASIC_TEST_OUTPUT)
 #######################################
 # Daemon
 ######################################
+
+C_DAEMON_SOURCES = \
+$(wildcard src/altair8800/*.c) \
+src/sys/log.c \
+src/sys/buffer.c \
+src/sys/pc/filesystem_pc.c \
+$(wildcard src/daemon/*.c)
+
 DAEMON_OBJECTS = $(addprefix $(DAEMON_BUILD_DIR)/,$(notdir $(C_DAEMON_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_DAEMON_SOURCES)))
 

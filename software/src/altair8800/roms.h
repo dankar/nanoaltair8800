@@ -10,5 +10,4 @@ typedef struct rom_t
     const uint8_t *data;
 } rom_t;
 
-
 #endif
