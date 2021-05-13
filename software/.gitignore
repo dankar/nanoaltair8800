@@ -4,7 +4,6 @@ test/build/
 test/build_release/
 *.zip
 *.log
-*.html
 *.bat
 *.sh
 *.el
