@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         }
         i++;
         ipc_get_input(&ipc_ctx);
-        //usleep(100);
+        usleep(100);
     }
     
 	ipc_close(&ipc_ctx);
