@@ -17,6 +17,12 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/html/index.html');
 });
 
+app.get('/control/reset', (req, res) => {
+  console.log("Emulator was reset");
+  pub_sock.send(['CONTROL', 'RESET']);
+  res.send('OK');
+});
+
 sub_sock.on("message", function(topic, message) {
 	io.emit('TERM', message.toString());
 });

@@ -38,6 +38,7 @@ typedef struct ipc_t
 	zsock_t *data_in;
 	zsock_t *lights_out;
 	zsock_t *switches_in;
+	zsock_t *control_channel;
 } ipc_t;
 
 ipc_result_t ipc_init(ipc_t *ctx);
@@ -46,6 +47,8 @@ ipc_result_t ipc_init(ipc_t *ctx);
 ipc_result_t ipc_set_lights(ipc_t *ctx, uint16_t address, uint8_t data);
 ipc_result_t ipc_get_switches(ipc_t *ctx, uint16_t *switches);
 ipc_result_t ipc_get_input(ipc_t *ctx);
+
+bool ipc_is_reset_pending(ipc_t *ctx);
 
 // Send stuff
 ipc_result_t ipc_write_output(ipc_t *ctx, void *data, size_t len);

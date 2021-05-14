@@ -90,6 +90,14 @@ int main(int argc, char *argv[])
         }
         send_term_out(&ipc_ctx);
         ipc_get_input(&ipc_ctx);
+        if(ipc_is_reset_pending(&ipc_ctx))
+        {
+            emu_reset(&cpu, true, &DBL);
+            sense_switches = 0xff;
+            i8080_examine(&cpu, 0xff00);
+            serial1_clear_buffer();
+        }
+                
         usleep(1);
     }
     

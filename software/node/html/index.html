@@ -3,18 +3,36 @@
   <head>
     <title>nanoaltair.io</title>
     <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: monospace; }
+	  html { height: 100%; }
+      body { margin: 0; height:100%; width: 100%; font-family: monospace; }
 
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-      #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
-
+	  #window { 
+		  width: 100%;
+		  height: 100%;
+	  }
+	  
       #messages { margin: 0; padding: 0; white-space: pre; }
+	  #button_div {
+		  position: fixed;
+		  bottom: 10%;
+		  right: 10%;
+	  }
+	  .control_button {
+	
+	  }
     </style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   </head>
   <body>
-    <p id="messages"></p>
+	<div id="window">
+      <p id="messages"></p>
+	  <div id="button_div">
+		<button id="reset_button" class="control_button">
+		  Reset
+		</button>
+	  </div>
+	</div>
+	
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 	  var socket = io();
@@ -39,6 +57,10 @@
 	  socket.on('TERM', function(msg) {
 		messages.textContent += msg;
 		window.scrollTo(0, document.body.scrollHeight);
+	  });
+
+	  $("#reset_button").click(function(){
+		$.ajax({url: "/control/reset"});
 	  });
 	</script>
   </body>

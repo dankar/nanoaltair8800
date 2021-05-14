@@ -9,3 +9,4 @@ test/build_release/
 *.el
 .clangd
 compile_commands.json
+node_modules
