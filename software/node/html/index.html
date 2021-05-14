@@ -22,10 +22,11 @@
 	  }
     </style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
   </head>
   <body>
 	<div id="window">
-      <p id="messages"></p>
+      <div id="terminal"></div>
 	  <div id="button_div">
 		<button id="reset_button" class="control_button">
 		  Reset
@@ -34,30 +35,20 @@
 	</div>
 	
 	<script src="/socket.io/socket.io.js"></script>
+	<script src="node_modules/xterm/lib/xterm.js"></script>
 	<script>
-	  var socket = io();
+	  var term = new Terminal();
+      term.open(document.getElementById('terminal'));
+  
+	  var terminal_socket = io();
 
-	  var messages = document.getElementById('messages');
+	  terminal_socket.on('TERM', function(msg) {
+		term.write(msg.toString());
+	  });
 
-	  document.addEventListener('keydown', function(e) {
-		  e.preventDefault();
-		  if(e.key == 'Enter')
-		  {
-			  socket.emit('TERM', '\n');
-		  }
-		  else
-		  {
-			  if(e.key.length == 1)
-			  {
-				  socket.emit('TERM', e.key);
-			  }
-		  }
-	  });
-	  
-	  socket.on('TERM', function(msg) {
-		messages.textContent += msg;
-		window.scrollTo(0, document.body.scrollHeight);
-	  });
+	  term.onData(e => {
+		terminal_socket.emit('TERM', e);
+      });
 
 	  $("#reset_button").click(function(){
 		$.ajax({url: "/control/reset"});

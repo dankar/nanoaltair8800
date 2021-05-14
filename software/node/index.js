@@ -17,6 +17,18 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/html/index.html');
 });
 
+app.get('/node_modules/xterm/css/xterm.css', (req, res) => {
+  res.sendFile(__dirname + '/node_modules/xterm/css/xterm.css');
+});
+
+app.get('/node_modules/xterm/lib/xterm.js', (req, res) => {
+  res.sendFile(__dirname + '/node_modules/xterm/lib/xterm.js');
+});
+
+app.get('/node_modules/xterm/lib/xterm.js.map', (req, res) => {
+  res.sendFile(__dirname + '/node_modules/xterm/lib/xterm.js.map');
+});
+
 app.get('/control/reset', (req, res) => {
   console.log("Emulator was reset");
   pub_sock.send(['CONTROL', 'RESET']);
