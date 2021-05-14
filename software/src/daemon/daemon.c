@@ -82,16 +82,13 @@ int main(int argc, char *argv[])
     i8080_examine(&cpu, 0xff00);
     serial1_clear_buffer();
 
-    int i = 0;
     while(!done)
     {
-        i8080_cycle(&cpu);
-        if(i == 1000)
+        for(int i = 0; i < 1000; i++)
         {
-            send_term_out(&ipc_ctx);
-            i = 0;
+            i8080_cycle(&cpu);
         }
-        i++;
+        send_term_out(&ipc_ctx);
         ipc_get_input(&ipc_ctx);
         usleep(1);
     }
