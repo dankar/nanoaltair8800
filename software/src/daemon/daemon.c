@@ -71,9 +71,21 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Could not open disk 0\n");
         return 1;
     }
-    if(!file_open_temporary(&floppy_disk_drive.disks[1].fp, "test/test_data/cpu_tests.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE))
+    if(!file_open_temporary(&floppy_disk_drive.disks[1].fp, "test/test_data/games.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE))
     {
         fprintf(stderr, "Could not open disk 1\n");
+        return 1;
+    }
+
+    if(!file_open_temporary(&floppy_disk_drive.disks[2].fp, "test/test_data/bdsc.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE))
+    {
+        fprintf(stderr, "Could not open disk 2\n");
+        return 1;
+    }
+
+    if(!file_open_temporary(&floppy_disk_drive.disks[3].fp, "test/test_data/zork.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE))
+    {
+        fprintf(stderr, "Could not open disk 3\n");
         return 1;
     }
 
