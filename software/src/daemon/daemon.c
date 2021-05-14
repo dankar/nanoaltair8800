@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
     while(!done)
     {
-        for(int i = 0; i < 1000; i++)
+        for(int i = 0; i < 500; i++)
         {
             i8080_cycle(&cpu);
         }
