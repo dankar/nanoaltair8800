@@ -14,9 +14,9 @@ jobs:
     steps:
         - uses: actions/checkout@v2
         - name: "Build & test"
-          run: ./build.sh archive
+          run: ./build.sh create_release
         - uses: "marvinpinto/action-automatic-releases@latest"
           with:
             repo_token: "${{ secrets.GITHUB_TOKEN }}"
             prerelease: false
-            files: releases/*.zip
+            files: build/release/*.zip

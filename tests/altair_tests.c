@@ -303,7 +303,7 @@ DECLARE_TEST(tape_basic)
 {
     reset(true, &MBL);
     START_TEST("open tape file", TEST_LEVEL_ONE);
-    TEST_CONDITION(file_open_temporary(&serial2_tape_file, "test/test_data/8K Basic Ver 4-0.tap", FILE_FLAG_READ | FILE_FLAG_OPEN), "tape opened");
+    TEST_CONDITION(file_open_temporary(&serial2_tape_file, "test_data/8K Basic Ver 4-0.tap", FILE_FLAG_READ | FILE_FLAG_OPEN), "tape opened");
     END_TEST();
     i8080_examine(&cpu, MBL.offset);
     sense_switches = 0b00011110;
@@ -326,9 +326,9 @@ DECLARE_TEST(tape_basic)
 DECLARE_TEST(cpm22)
 {
     START_TEST("open disk file", TEST_LEVEL_ONE);
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[0].fp, "test/test_data/cpm63k.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 0 opened");
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[1].fp, "test/test_data/sysdev.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 1 opened");
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[2].fp, "test/test_data/bdsc.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 2 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[0].fp, "test_data/cpm63k.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 0 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[1].fp, "test_data/sysdev.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 1 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[2].fp, "test_data/bdsc.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 2 opened");
     END_TEST();
     
     serial1_clear_buffer();
@@ -347,9 +347,9 @@ DECLARE_TEST(cpm22)
 DECLARE_TEST(cpm30)
 {
     START_TEST("open disk file", TEST_LEVEL_ONE);
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[0].fp, "test/test_data/cpm3_v1.0_56K_disk1.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 0 opened");
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[1].fp, "test/test_data/cpm3_v1.0_56k_build.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 1 opened");
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[2].fp, "test/test_data/bdsc.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 2 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[0].fp, "test_data/cpm3_v1.0_56K_disk1.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 0 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[1].fp, "test_data/cpm3_v1.0_56k_build.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 1 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[2].fp, "test_data/bdsc.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 2 opened");
     END_TEST();
     
     serial1_clear_buffer();
@@ -385,7 +385,7 @@ DECLARE_TEST(rtc_interrupt)
     reset(true, &TURMONH);
     memory_load_rom(&MBL);
     START_TEST("open tape file", TEST_LEVEL_ONE);
-    TEST_CONDITION(file_open_temporary(&serial2_tape_file, "test/test_data/8K Basic Ver 4-0.tap", FILE_FLAG_READ | FILE_FLAG_OPEN), "tape opened");
+    TEST_CONDITION(file_open_temporary(&serial2_tape_file, "test_data/8K Basic Ver 4-0.tap", FILE_FLAG_READ | FILE_FLAG_OPEN), "tape opened");
     END_TEST();
     i8080_examine(&cpu, TURMONH.offset);
     sense_switches = 0b00011110;
@@ -474,8 +474,8 @@ DECLARE_TEST(rtc_interrupt)
 DECLARE_TEST(cpu_tests)
 {
     START_TEST("open disk file", TEST_LEVEL_ONE);
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[0].fp, "test/test_data/cpm63k.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 0 opened");
-    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[1].fp, "test/test_data/cpu_tests.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 1 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[0].fp, "test_data/cpm63k.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 0 opened");
+    TEST_CONDITION(file_open_temporary(&floppy_disk_drive.disks[1].fp, "test_data/cpu_tests.dsk", FILE_FLAG_READ | FILE_FLAG_OPEN | FILE_FLAG_WRITE), "disk 1 opened");
     END_TEST();
     
     reset(true, &DBL);
