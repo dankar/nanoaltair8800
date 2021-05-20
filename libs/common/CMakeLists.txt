@@ -1,4 +1,5 @@
 add_library(common
+  ./sys/syscalls.c
   ./config/config.h
   ./config/config.c
   ./sys/atomic_lock.h
@@ -18,8 +19,7 @@ add_library(common
   ./sys/buffer.h
   ./sys/hw_timer.h
   ./sys/filesystem.h
-  ./sys/usb.h
-  ./sys/syscalls.c)
+  ./sys/usb.h)
 
 target_link_libraries(common PRIVATE stm32cube altair8800)
 
