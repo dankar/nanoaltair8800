@@ -10,6 +10,24 @@ project(nanoaltair8800
 include(version.cmake)
 get_version_string(VERSION_STRING .)
 
+include(ExternalProject)
+ExternalProject_Add(basic_tests
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tests
+  BINARY_DIR ${CMAKE_BINARY_DIR}/tests
+  STEP_TARGETS build
+  BUILD_COMMAND make test_run_basic
+  EXCLUDE_FROM_ALL YES)
+
+ExternalProject_Add(full_tests
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/tests
+  BINARY_DIR ${CMAKE_BINARY_DIR}/tests
+  STEP_TARGETS build
+  BUILD_COMMAND make test_run_full
+  EXCLUDE_FROM_ALL YES)
+
+add_custom_target(tester ALL)
+add_dependencies(tester basic_tests-build)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -30,6 +48,8 @@ if(${BUILD_WITH_PROFILER})
   add_definitions(-DPROFILER_ENABLED=1)
 endif()
 
+
+
 set(LINKER_SCRIPT
   "${PROJECT_SOURCE_DIR}/libs/stm32cube/STM32L496RETx_FLASH.ld")
 set(CMAKE_EXE_LINKER_FLAGS
@@ -42,3 +62,5 @@ add_definitions(
 
 add_subdirectory(libs)
 add_subdirectory(firmware)
+
+
