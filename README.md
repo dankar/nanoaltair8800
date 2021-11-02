@@ -195,10 +195,24 @@ In this case we set the lower three switches to 110 to tell the bootloader to lo
 Building the firmware
 =====================
 
-The firmware is located under software/ and requires gcc (for tests), gcc-arm-none-eabi and make. If using a debian based distro, the get-env.sh script can be used to install the required packages. After that, make can be used to build a firmware. "make all" will build a debug build and "make release" will build a release with the version number specified in the Makefile. "make archive" will create a release and create a ZIP file with the release. Archive builds will take a few minutes due to the additional tests being executed.
+Project is built with cmake:
 
-"make program_debug" will build and start DFU for updating firmware. "program_release" should be self-explanatory. "program_profile" will program a special profiling version of the software. The firmware will periodically dump profiling information via the terminal.
+```
+apt install cmake git zip gcc gcc-arm-none-eabi make
+mkdir build
+cd build
+cmake ..
+make -j
+```
 
-A suite of tests are automatically executed when building, the number of tests depends on the type of build. The output from the tests uses ANSI colors so they might look wrong depending on your terminal. The build will halt if the tests fail. This can be controlled via removing dependencies on FULL_TEST_OUTPUT and BASIC_TEST_OUTPUT.
+Alternatively, you can use docker to build by simply running:
 
-There are files under software/ for working in Visual Studio Code. These probably need to be modified to suite your environment. They contain among other things paths to JLink debugger executables.
+```
+./build.sh all
+```
+
+And if you want a packaged release, run:
+
+```
+./build.sh create_release
+```

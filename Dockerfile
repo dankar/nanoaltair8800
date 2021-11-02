@@ -5,5 +5,5 @@ RUN apt -y install cmake git zip gcc gcc-arm-none-eabi make
 ENV BUILD_TARGET=all
 VOLUME /altair8800
 WORKDIR /altair8800
-CMD mkdir -p build && cd build && rm -rf * && cmake .. && make $BUILD_TARGET -j8
+CMD mkdir -p build && cd build && rm -rf * && cmake .. && make $BUILD_TARGET -j
 
