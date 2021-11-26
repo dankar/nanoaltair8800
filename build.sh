@@ -6,5 +6,5 @@ then
 	docker build . -t dankar/altair8800
 	docker run -e BUILD_TARGET=$1 --user $(id -u):$(id -g) -v $PWD:/altair8800 dankar/altair8800
 else
-	echo "You must supply a build target as parameter. (all or create_release)"
+	echo "You must supply a build target as parameter. (all, create_release)"
 fi
